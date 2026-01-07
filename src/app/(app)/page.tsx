@@ -14,35 +14,50 @@ export default async function Home() {
   })
 
   // Simulate "Trending" by taking the first 5 books (or random if we had more logic)
-  const trendingBooks = books.docs.slice(0, 5)
+  const trendingBooks = books.docs.slice(0, 5).map((book: any) => ({
+    id: book.id,
+    title: book.title,
+    subtitle: book.author,
+    imageUrl: book.cover?.url,
+    link: `/books/${book.id}`
+  }))
 
   return (
     <div>
-      <h1 style={{ fontSize: '2rem', marginBottom: '2rem', fontWeight: 'bold' }}>Library CMS</h1>
+      <h1 className="section-title" style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>Library CMS</h1>
+      <p style={{ fontSize: '1.125rem', color: 'var(--muted-foreground)', marginBottom: '3rem' }}>
+        Discover your next great read from our curated collection.
+      </p>
 
-      <Carousel books={trendingBooks} />
+      <Carousel title="Trending Now" items={trendingBooks} />
 
-      <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem', marginTop: '3rem', fontWeight: 'bold' }}>All Books</h2>
+      <h2 className="section-title">All Books</h2>
       <div className="grid">
         {books.docs.map((book) => (
-          <div key={book.id} className="card">
-            {book.cover?.url && (
-              <div style={{ height: '200px', background: `url(${book.cover.url}) center/cover no-repeat`, borderRadius: '4px 4px 0 0', marginBottom: '1rem' }} />
-            )}
-            <div className="card-body">
+          <Link key={book.id} href={`/books/${book.id}`} className="card card-hover">
+            <div className="card-image-wrapper">
+              {book.cover?.url ? (
+                <img src={book.cover.url} alt={book.title} loading="lazy" />
+              ) : (
+                <div className="image-placeholder" style={{ backgroundColor: 'var(--secondary)' }}>
+                  <span>No Cover</span>
+                </div>
+              )}
+            </div>
+            <div className="card-content">
               <h2 className="card-title">{book.title}</h2>
               <h3 className="card-subtitle">by {book.author}</h3>
-              <p style={{ marginTop: '0.5rem', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+              <p className="card-body-text">
                 {book.description}
               </p>
+              <span className="btn">View Details</span>
             </div>
-            <Link href={`/books/${book.id}`} className="btn">
-              View Details
-            </Link>
-          </div>
+          </Link>
         ))}
         {books.docs.length === 0 && (
-          <p className="card-subtitle">No books found. Add some in the Admin panel!</p>
+          <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '4rem', backgroundColor: 'var(--muted)', borderRadius: 'var(--radius)' }}>
+            <p style={{ color: 'var(--muted-foreground)' }}>No books found in the collection.</p>
+          </div>
         )}
       </div>
     </div>
