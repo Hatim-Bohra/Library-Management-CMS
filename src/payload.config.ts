@@ -5,16 +5,18 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 
+import { Books } from './collections/Books'
+import { BlogPosts } from './collections/BlogPosts'
+import { Components } from './collections/Components'
+import { Pages } from './collections/Pages'
+import { Media } from './collections/Media'
+
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
 export default buildConfig({
     editor: lexicalEditor(),
-    admin: {
-        importMap: {
-            baseDir: path.resolve(dirname),
-        },
-    },
+
     collections: [
         {
             slug: 'users',
@@ -25,6 +27,11 @@ export default buildConfig({
             },
             fields: [],
         },
+        Books,
+        BlogPosts,
+        Components,
+        Pages,
+        Media,
     ],
     secret: process.env.PAYLOAD_SECRET || '',
     typescript: {
