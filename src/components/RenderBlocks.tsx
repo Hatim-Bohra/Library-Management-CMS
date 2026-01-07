@@ -1,31 +1,23 @@
 import React from 'react'
-import { TextBlock } from './TextBlock'
-import { Carousel } from './Carousel'
+import { CarouselBlockComponent } from './CarouselBlockComponent'
+import { BookGrid } from './BookGrid'
 
-export const RenderBlocks = ({ components }: { components: any[] }) => {
-    if (!components || !Array.isArray(components)) return null
+export const RenderBlocks = ({ blocks }: { blocks: any[] }) => {
+    if (!blocks || !Array.isArray(blocks)) return null
 
     return (
         <div className="blocks-container">
-            {components.map((block, index) => {
-                // Handle relationship expansion: block might be an object with 'value' or just the id depending on depth
-                // But usually in Pages.ts we define 'components' as a relationship. 
-                // Payload API returns relationship objects.
-                // The structure depends on how we fetch it. Assuming depth > 0.
+            {blocks.map((block, index) => {
+                const { blockType, ...blockData } = block
 
-                const componentData = block.value || block
-
-                if (!componentData) return null
-
-                const { componentType, data } = componentData
-
-                switch (componentType) {
-                    case 'textBlock':
-                        return <TextBlock key={index} data={data} />
+                switch (blockType) {
+                    case 'bookGrid':
+                        return <BookGrid key={index} {...blockData} />
                     case 'carousel':
-                        return <Carousel key={index} data={data} />
+                        return <CarouselBlockComponent key={index} {...blockData} />
                     default:
-                        return <div key={index}>Unknown component type: {componentType}</div>
+                        // Silently ignore unknown blocks or show a dev warning
+                        return process.env.NODE_ENV === 'development' ? <div key={index}>Unknown block: {blockType}</div> : null
                 }
             })}
         </div>

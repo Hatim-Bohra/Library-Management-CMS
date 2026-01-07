@@ -1,4 +1,6 @@
 import type { CollectionConfig } from 'payload'
+import { BookGridBlock } from '../blocks/BookGridBlock'
+import { CarouselBlock } from '../blocks/CarouselBlock'
 
 export const Pages: CollectionConfig = {
     slug: 'pages',
@@ -14,10 +16,12 @@ export const Pages: CollectionConfig = {
             label: 'Is Root Page (Home)',
         },
         {
-            name: 'components',
-            type: 'relationship',
-            relationTo: 'components',
-            hasMany: true,
+            name: 'layout',
+            type: 'blocks',
+            blocks: [
+                CarouselBlock,
+                BookGridBlock,
+            ],
             required: true,
         },
     ],

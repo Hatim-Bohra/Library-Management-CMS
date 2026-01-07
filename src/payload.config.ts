@@ -7,7 +7,6 @@ import sharp from 'sharp'
 
 import { Books } from './collections/Books'
 import { BlogPosts } from './collections/BlogPosts'
-import { Components } from './collections/Components'
 import { Pages } from './collections/Pages'
 import { Media } from './collections/Media'
 
@@ -29,7 +28,6 @@ export default buildConfig({
         },
         Books,
         BlogPosts,
-        Components,
         Pages,
         Media,
     ],

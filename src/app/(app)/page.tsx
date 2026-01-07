@@ -1,65 +1,44 @@
 import React from 'react'
-import Link from 'next/link'
 import { getLocalPayload } from '../../lib/payload'
-import { Carousel } from '../../components/Carousel'
+import { RenderBlocks } from '../../components/RenderBlocks'
 
 export const dynamic = 'force-dynamic'
 
-export default async function Home() {
+export default async function Page() {
   const payload = await getLocalPayload()
 
-  const books = await payload.find({
-    collection: 'books',
-    limit: 100,
+  // Find the page with slug 'home'
+  const result = await payload.find({
+    collection: 'pages',
+    where: {
+      slug: {
+        equals: 'home',
+      },
+    },
   })
 
-  // Simulate "Trending" by taking the first 5 books (or random if we had more logic)
-  const trendingBooks = books.docs.slice(0, 5).map((book: any) => ({
-    id: book.id,
-    title: book.title,
-    subtitle: book.author,
-    imageUrl: book.cover?.url,
-    link: `/books/${book.id}`
-  }))
+  const homePage = result.docs[0]
+
+  if (!homePage) {
+    return (
+      <div className="container page-container" style={{ textAlign: 'center', padding: '4rem 0' }}>
+        <h1 className="section-title">Welcome to the Library</h1>
+        <p className="card-subtitle">
+          This content is dynamic! To set up your home page:
+        </p>
+        <ol style={{ textAlign: 'left', display: 'inline-block', color: 'var(--muted-foreground)', marginTop: '1rem', lineHeight: '1.6' }}>
+          <li>Go to the <a href="/admin" style={{ textDecoration: 'underline', color: 'var(--foreground)' }}>Admin Panel</a>.</li>
+          <li>Create a new Page with the slug <strong>home</strong>.</li>
+          <li>Add blocks like "Carousel" and "Book Grid" to the layout.</li>
+          <li>Save and refresh this page.</li>
+        </ol>
+      </div>
+    )
+  }
 
   return (
-    <div>
-      <h1 className="section-title" style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>Library CMS</h1>
-      <p style={{ fontSize: '1.125rem', color: 'var(--muted-foreground)', marginBottom: '3rem' }}>
-        Discover your next great read from our curated collection.
-      </p>
-
-      <Carousel title="Trending Now" items={trendingBooks} />
-
-      <h2 className="section-title">All Books</h2>
-      <div className="grid">
-        {books.docs.map((book) => (
-          <Link key={book.id} href={`/books/${book.id}`} className="card card-hover">
-            <div className="card-image-wrapper">
-              {book.cover?.url ? (
-                <img src={book.cover.url} alt={book.title} loading="lazy" />
-              ) : (
-                <div className="image-placeholder" style={{ backgroundColor: 'var(--secondary)' }}>
-                  <span>No Cover</span>
-                </div>
-              )}
-            </div>
-            <div className="card-content">
-              <h2 className="card-title">{book.title}</h2>
-              <h3 className="card-subtitle">by {book.author}</h3>
-              <p className="card-body-text">
-                {book.description}
-              </p>
-              <span className="btn">View Details</span>
-            </div>
-          </Link>
-        ))}
-        {books.docs.length === 0 && (
-          <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '4rem', backgroundColor: 'var(--muted)', borderRadius: 'var(--radius)' }}>
-            <p style={{ color: 'var(--muted-foreground)' }}>No books found in the collection.</p>
-          </div>
-        )}
-      </div>
+    <div className="container page-container">
+      <RenderBlocks blocks={homePage.layout} />
     </div>
   )
 }
