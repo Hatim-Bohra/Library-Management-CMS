@@ -9,6 +9,7 @@ import { Books } from './collections/Books'
 import { BlogPosts } from './collections/BlogPosts'
 import { Pages } from './collections/Pages'
 import { Media } from './collections/Media'
+import { getLibraryStats } from './endpoints/getLibraryStats'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -35,6 +36,13 @@ export default buildConfig({
     typescript: {
         outputFile: path.resolve(dirname, 'payload-types.ts'),
     },
+    endpoints: [
+        {
+            path: '/stats',
+            method: 'get',
+            handler: getLibraryStats,
+        },
+    ],
     db: mongooseAdapter({
         url: process.env.DATABASE_URI || '',
     }),
